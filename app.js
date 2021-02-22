@@ -8,15 +8,23 @@ let userAttemptsCounter=0;
 let leftImageIndex ;
 let middleImageIndex;
 let rightImageIndex;
+let mallname=[];
+let mallVotes = [];
+let mallShown = [];
+let displayimage=[];
 
 function MallImage(name, source) {
-    this.name = name;
-    this.source = source;
-    this.votes = 0;
-    MallImage.allImages.push(this);
-  }
-  console.log(this);
-  MallImage.allImages = [];
+  this.name = name;
+  this.source = source;
+  this.votes = 0;
+  this.shown = 0;
+  MallImage.allImages.push(this);
+  mallname.push(name);
+
+}
+
+
+MallImage.allImages = [];
 
  new MallImage('bag', 'images/bag.jpg'); 
  new MallImage('banana', 'images/banana.jpg'); 
@@ -51,19 +59,39 @@ function MallImage(name, source) {
     leftImageIndex = generateRandomIndex();
     rightImageIndex=generateRandomIndex();
     middleImageIndex=generateRandomIndex();
+    displayimage.push(leftImageIndex);
+    displayimage.push(rightImageIndex);
+    displayimage.push(middleImageIndex);
+
+
     
   
     do{
-     rightImageIndex=generateRandomIndex();
-    }while (leftImageIndex === rightImageIndex)
+    leftImageIndex = generateRandomIndex();
+    rightImageIndex=generateRandomIndex();
+    middleImageIndex=generateRandomIndex();
+     
+    }while (leftImageIndex === rightImageIndex||leftImageIndex===middleImageIndex||middleImageIndex===rightImageElement||displayimage.includes(rightImageIndex)||displayimage.includes(middleImageIndex)||displayimage.includes(leftImageIndex))
+     displayimage=[];
+     displayimage.push(leftImageIndex);
+     displayimage.push(middleImageIndex);
+     displayimage.push(rightImageIndex);
   
-  
-    MallImage.allImages
-   // console.log(MallImage.allImages[leftImageIndex]);
-  
-    leftImageElement.src = MallImage.allImages[leftImageIndex].source;
-    rightImageElement.src = MallImage.allImages[rightImageIndex].source;
-   middleImageElement.src= MallImage.allImages[middleImageIndex].source;
+    
+   console.log(displayimage);
+   MallImage.allImages
+   console.log(MallImage.allImages[leftImageIndex]);
+ 
+   leftImageElement.src = MallImage.allImages[leftImageIndex].source;
+   MallImage.allImages[leftImageIndex].shown++;
+ 
+   rightImageElement.src =MallImage.allImages[rightImageIndex].source;
+   MallImage.allImages[rightImageIndex].shown++;
+
+   middleImageElement.src =MallImage.allImages[middleImageIndex].source;
+   MallImage.allImages[middleImageIndex].shown++;
+
+
 
     
   }
@@ -81,7 +109,7 @@ function handleUserClick(event) {
   
     console.log(event.target.id);
   
-    if(userAttemptsCounter<maxAttempts){
+    if(userAttemptsCounter<=maxAttempts){
       // make sure to add to votes for the correct element and render again
       if(event.target.id ==='left-image'){
         mallresult.allImages[leftImageIndex].votes++
@@ -99,12 +127,68 @@ function handleUserClick(event) {
       for(let i=0;i<MallImage.allImages.length;i++){
         mallresult=document.createElement('li');
         list.appendChild(mallresult);
-        mallresult.textContent = MallImage.allImages[i].name +  ' has ' +  MallImage.allImages[i].votes + ' votes';
+        mallresult.textContent = MallImage.allImages[i].name +  ' has ' +  MallImage.allImages[i].votes + ' votes'+'   '+'and'+ ' '+MallImage.allImages[i].name +'  '+'has'+  MallImage.allImages[i].shown+'shown';
       }
       rightImageElement.removeEventListener('click',handleUserClick);
       leftImageElement.removeEventListener('click',handleUserClick);
       middleImageElement.removeEventListener('click',handleUserClick);
   
   
-    }
+    
+  
+  
+  for (let i = 0; i < MallImage.allImages.length; i++) {
+    
+    mallVotes.push(MallImage.allImages[i].votes);
+
+    mallShown.push(MallImage.allImages[i].shown);
+    
   }
+  viewChart();
+}
+}
+
+
+
+
+
+  function viewChart() {
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+  
+    let chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'bar',
+  
+      // The data for our dataset
+      data: {
+        labels: mallname,
+  
+        datasets: [
+  
+  
+          {
+            label: 'Mall votes',
+            backgroundColor: '#ffc0cb',
+            borderColor: '#0000FF',
+            data: mallVotes
+          },
+          
+          {
+            label: 'Mall shown',
+            backgroundColor: '#0000FF',
+            borderColor: '#0000FFF',
+            data: mallShown
+          },
+     
+  
+        ]
+      },
+       
+  
+      // Configuration options go here
+      options: {}
+    
+    }); 
+  }
+
