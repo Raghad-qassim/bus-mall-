@@ -47,7 +47,48 @@ MallImage.allImages = [];
  new MallImage('water-can', 'images/water-can.jpg');
  new MallImage('wine-glass', 'images/wine-glass.jpg');
  
- console.log(MallImage.allImages);
+//  console.log(MallImage.allImages);
+ 
+ 
+
+ function settingItems() {
+  
+  
+  let data = JSON.stringify(MallImage.allImages);
+   console.log(data);
+  
+  localStorage.setItem('MallImage',data);
+
+}  
+
+function gettingItems() {
+ 
+
+ let stringObject= localStorage.getItem('MallImage');
+
+  console.log(stringObject);
+  let normalObject=JSON.parse(stringObject);
+  //  console.log(noramlObject);
+
+   if ( normalObject!== null) {
+    MallImage.allImages=normalObject;
+    for (let i = 0; i < MallImage.allImages.length; i++) {
+    
+      mallVotes.push(MallImage.allImages[i].votes);
+  
+      mallShown.push(MallImage.allImages[i].shown);
+      
+    }
+
+  viewChart();
+
+    
+   }
+
+  
+ 
+}
+
 
  function generateRandomIndex() {
     return Math.floor( Math.random() * MallImage.allImages.length);
@@ -98,11 +139,12 @@ MallImage.allImages = [];
   
   renderthreeImages();
 
-leftImageElement.addEventListener('click',handleUserClick);
-rightImageElement.addEventListener('click',handleUserClick);
-middleImageElement.addEventListener('click',handleUserClick);
+// leftImageElement.addEventListener('click',handleUserClick);
+// rightImageElement.addEventListener('click',handleUserClick);
+// middleImageElement.addEventListener('click',);
 
- 
+let dev=document.getElementById("images-div") ;
+dev.addEventListener('click',handleUserClick)
 function handleUserClick(event) {
     // give the user 25 tries to click after that show result
     userAttemptsCounter++;
@@ -112,7 +154,7 @@ function handleUserClick(event) {
     if(userAttemptsCounter<=maxAttempts){
       // make sure to add to votes for the correct element and render again
       if(event.target.id ==='left-image'){
-        mallresult.allImages[leftImageIndex].votes++
+        MallImage.allImages[leftImageIndex].votes++
   
       }else{
         MallImage.allImages[rightImageIndex].votes++
@@ -129,9 +171,9 @@ function handleUserClick(event) {
         list.appendChild(mallresult);
         mallresult.textContent = MallImage.allImages[i].name +  ' has ' +  MallImage.allImages[i].votes + ' votes'+'   '+'and'+ ' '+MallImage.allImages[i].name +'  '+'has'+  MallImage.allImages[i].shown+'shown';
       }
-      rightImageElement.removeEventListener('click',handleUserClick);
-      leftImageElement.removeEventListener('click',handleUserClick);
-      middleImageElement.removeEventListener('click',handleUserClick);
+      // rightImageElement.removeEventListener('click',handleUserClick);
+      // leftImageElement.removeEventListener('click',handleUserClick);
+      dev.removeEventListener('click',handleUserClick);
   
   
     
@@ -145,6 +187,7 @@ function handleUserClick(event) {
     
   }
   viewChart();
+  settingItems();
 }
 }
 
@@ -191,4 +234,7 @@ function handleUserClick(event) {
     
     }); 
   }
+  gettingItems();
+  
+
 
